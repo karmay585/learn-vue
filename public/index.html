@@ -56,7 +56,16 @@
                 </div>
             </div>
             <div v-else class="row">
-                Тут типа корзина
+                <div class="col-6">
+                    <b>Last Name:</b>
+                    <input v-model="order.lastName" class="form-control">
+                </div>
+                <div class="col-12">
+                    <pre>
+                        First Name: {{ order.firstName }}
+                        Last NAme: {{ order.lastName }}
+                    </pre>
+                </div>
             </div>
         </div>
     </div>
@@ -77,6 +86,10 @@
                 },
                 showProduct: true,
                 cart: [],
+                order: {
+                    firstNAme: '',
+                    lastName: '',
+                }
             },
 
             filters: {
