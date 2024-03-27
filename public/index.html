@@ -83,11 +83,13 @@
                     <div class="col-2">
                         <b>Область:</b>
                         <select v-model="order.state" class="form-control">
-                            <option>Область</option>
-                            <option>Кузькина</option>
-                            <option>Иванкина</option>
-                            <option>Еще одна</option>
-                            <option>Областная</option>
+                            <option disabled>Укажите область</option>
+                            <option v-for="(state, key) in states"
+                                    v-bind:value="state"
+                                    :key="key"
+                                >
+                                {{ state }}
+                            </option>
                         </select>
                     </div>
                 </div>
@@ -100,15 +102,25 @@
                 <div class="form-group">
                     <div class="col-3">
                         <label for="gift">Отправить как подарок?    </label>
-                        <input v-model="order.gift" type="checkbox" id="gift">
+                        <input type="checkbox" id="gift"
+                               v-model="order.gift"
+                               v-bind:true-value="order.sendGift"
+                               v-bind:false-value="order.dontSendGift"
+                        >
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-2">
                         <label for="home">Домой</label>
-                        <input v-model="order.method" type="radio" id="home" value="Дом" >
+                        <input type="radio" id="home" value="Домой"
+                               v-model="order.method"
+                               v-bind:value="order.home"
+                        >
                         <label for="work">На работу</label>
-                        <input v-model="order.method" type="radio" id="work" value="Работа" >
+                        <input type="radio" id="work" value="На работу"
+                               v-model="order.method"
+                               v-bind:value="order.work"
+                        >
                     </div>
                 </div>
                 <div class="form-group">
@@ -163,9 +175,20 @@
                     city: '',
                     state: '',
                     zip: '',
-                    gift: 'false',
+                    gift: false,
                     method: 'Домой',
-                }
+                    sendGift: 'Отправить как подарок',
+                    dontSendGift: 'Обычная отправка',
+                    home: 'Домой',
+                    work: 'На работу',
+                },
+                states: [
+                    'Область',
+                    'Кузькина',
+                    'Иванкина',
+                    'Еще одна',
+                    'Областная'
+                ],
             },
 
             filters: {
