@@ -55,16 +55,86 @@
                     </button>
                 </div>
             </div>
-            <div v-else class="row">
-                <div class="col-6">
-                    <b>Last Name:</b>
-                    <input v-model="order.lastName" class="form-control">
+            <div v-else class="cart">
+                <div class="form-group">
+                    <div class="col-3">
+                        <b>First Name:</b>
+                        <input v-model="order.firstName" class="form-control">
+                    </div>
                 </div>
-                <div class="col-12">
-                    <pre>
-                        First Name: {{ order.firstName }}
-                        Last NAme: {{ order.lastName }}
-                    </pre>
+                <div class="form-group my-3">
+                    <div class="col-3">
+                        <b>Last Name:</b>
+                        <input v-model="order.lastName" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-3"><b>Адрес:</b>
+                        <input v-model="order.address" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-3">
+                        <b>Город:</b>
+                        <input v-model="order.city" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-2">
+                        <b>Область:</b>
+                        <select v-model="order.state" class="form-control">
+                            <option>Область</option>
+                            <option>Кузькина</option>
+                            <option>Иванкина</option>
+                            <option>Еще одна</option>
+                            <option>Областная</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-4 col-offset-2">
+                        Почтовый индекс:
+                        <input v-model="order.zip" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-3">
+                        <label for="gift">Отправить как подарок?    </label>
+                        <input v-model="order.gift" type="checkbox" id="gift">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-2">
+                        <label for="home">Домой</label>
+                        <input v-model="order.method" type="radio" id="home" value="Дом" >
+                        <label for="work">На работу</label>
+                        <input v-model="order.method" type="radio" id="work" value="Работа" >
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-2">
+                        <button type="submit"
+                                class="btn btn-primary"
+                                @click="submitForm"
+                        >Заказать</button>
+                    </div>
+                </div>
+
+
+
+                <div class="row my-4">
+                    <div class="col-12">
+                        <pre>
+                            First Name: {{ order.firstName }}
+                            Last NAme: {{ order.lastName }}
+                            Адрес: {{ order.address }}
+                            Город: {{ order.city }}
+                            Область: {{ order.state }}
+                            Индекс: {{ order.zip }}
+                            Подарок: {{ order.gift }}
+                            Куда: {{ order.method }}
+                        </pre>
+                    </div>
                 </div>
             </div>
         </div>
@@ -87,8 +157,14 @@
                 showProduct: true,
                 cart: [],
                 order: {
-                    firstNAme: '',
+                    firstName: '',
                     lastName: '',
+                    address: '',
+                    city: '',
+                    state: '',
+                    zip: '',
+                    gift: 'false',
+                    method: 'Домой',
                 }
             },
 
@@ -127,6 +203,9 @@
                 },
                 showCheckout() {
                     return this.showProduct = !this.showProduct;
+                },
+                submitForm() {
+                    alert('Форма отправлена');
                 },
             },
         });
