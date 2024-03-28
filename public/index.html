@@ -55,8 +55,99 @@
                     </button>
                 </div>
             </div>
-            <div v-else class="row">
-                Тут типа корзина
+            <div v-else class="cart">
+                <div class="form-group">
+                    <div class="col-3">
+                        <b>First Name:</b>
+                        <input v-model="order.firstName" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group my-3">
+                    <div class="col-3">
+                        <b>Last Name:</b>
+                        <input v-model="order.lastName" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-3"><b>Адрес:</b>
+                        <input v-model="order.address" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-3">
+                        <b>Город:</b>
+                        <input v-model="order.city" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-2">
+                        <b>Область:</b>
+                        <select v-model="order.state" class="form-control">
+                            <option disabled>Укажите область</option>
+                            <option v-for="(state, key) in states"
+                                    v-bind:value="state"
+                                    :key="key"
+                                >
+                                {{ state }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-4 col-offset-2">
+                        Почтовый индекс:
+                        <input v-model.number="order.zip" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-3">
+                        <label for="gift">Отправить как подарок?    </label>
+                        <input type="checkbox" id="gift"
+                               v-model="order.gift"
+                               v-bind:true-value="order.sendGift"
+                               v-bind:false-value="order.dontSendGift"
+                        >
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-2">
+                        <label for="home">Домой</label>
+                        <input type="radio" id="home" value="Домой"
+                               v-model="order.method"
+                               v-bind:value="order.home"
+                        >
+                        <label for="work">На работу</label>
+                        <input type="radio" id="work" value="На работу"
+                               v-model="order.method"
+                               v-bind:value="order.work"
+                        >
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-2">
+                        <button type="submit"
+                                class="btn btn-primary"
+                                @click="submitForm"
+                        >Заказать</button>
+                    </div>
+                </div>
+
+
+
+                <div class="row my-4">
+                    <div class="col-12">
+                        <pre>
+                            First Name: {{ order.firstName }}
+                            Last NAme: {{ order.lastName }}
+                            Адрес: {{ order.address }}
+                            Город: {{ order.city }}
+                            Область: {{ order.state }}
+                            Индекс: {{ order.zip }}
+                            Подарок: {{ order.gift }}
+                            Куда: {{ order.method }}
+                        </pre>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -77,6 +168,27 @@
                 },
                 showProduct: true,
                 cart: [],
+                order: {
+                    firstName: '',
+                    lastName: '',
+                    address: '',
+                    city: '',
+                    state: '',
+                    zip: '',
+                    gift: false,
+                    method: 'Домой',
+                    sendGift: 'Отправить как подарок',
+                    dontSendGift: 'Обычная отправка',
+                    home: 'Домой',
+                    work: 'На работу',
+                },
+                states: [
+                    'Область',
+                    'Кузькина',
+                    'Иванкина',
+                    'Еще одна',
+                    'Областная'
+                ],
             },
 
             filters: {
@@ -114,6 +226,9 @@
                 },
                 showCheckout() {
                     return this.showProduct = !this.showProduct;
+                },
+                submitForm() {
+                    alert('Форма отправлена');
                 },
             },
         });
