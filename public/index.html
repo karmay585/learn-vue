@@ -37,7 +37,7 @@
 
         <div class="container">
             <div v-if="showProduct">
-                <div v-for="(product) in products">
+                <div v-for="(product) in sortedProducts">
                     <div class="row product">
                         <div class="col">
                             <figure>
@@ -247,6 +247,21 @@
             computed: {
                 cartItemCount: function() {
                     return this.cart.length || '';
+                },
+                sortedProducts: function() {
+                    if (this.products.length > 0) {
+                        let productsArray = this.products.slice(0);
+
+                        function compare (a, b) {
+                            return a.title.toLowerCase() < b.toLowerCase()
+                                ? -1
+                                : a.title.toLowerCase() > b.toLowerCase()
+                                    ? 1
+                                    : 0;
+                        }
+
+                        return productsArray.sort(compare);
+                    }
                 },
             },
 
