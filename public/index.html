@@ -7,6 +7,7 @@
 <!--    <script src="assets/js/vue-3.4.21.js"></script>-->
 <!--    <script src="https://unpkg.com/vue"></script>-->
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.16.2/axios.js"></script>
     <link rel="stylesheet" href="assets/css/bootstrap-5.0.2.css">
     <link rel="stylesheet" href="assets/css/app.css">
 </head>
@@ -35,24 +36,55 @@
         </header>
 
         <div class="container">
-            <div v-if="showProduct" class="row product">
-                <div class="col">
-                    <figure>
-                        <img v-bind:src="product.image" alt="">
-                    </figure>
-                </div>
-                <div class="col col-expand">
-                    <h3 v-text="product.title"></h3>
-                    <p v-html="product.description"></p>
-                    <p class="price">
-                        {{ product.price | formatPrice }}
-                    </p>
-                    <button class="btn btn-success"
-                        @click="addToCart"
-                            :disabled="!canAddToCart"
-                    >
-                        Добавить в корзину
-                    </button>
+            <div v-if="showProduct">
+                <div v-for="(product) in sortedProducts">
+                    <div class="row product">
+                        <div class="col">
+                            <figure>
+                                <img v-bind:src="product.image" alt="" style="{width: 80px}">
+                            </figure>
+                        </div>
+                        <div class="col col-expand">
+                            <h3 v-text="product.title"></h3>
+                            <p v-html="product.description"></p>
+                            <p class="price">
+                                {{ product.price | formatPrice }}
+                            </p>
+                            <p>
+                                <span v-for="n in 5">
+                                    <span v-if="checkRating(n, product)">★</span>
+                                    <span v-else>☆</span>
+                                </span>
+                            </p>
+
+                            <button class="btn btn-success"
+                                    v-if="canAddToCart(product)"
+                                    @click="addToCart(product)"
+                                    :disabled="!canAddToCart(product)"
+                            >
+                                Добавить в корзину
+                            </button>
+                            <button v-else disabled="true" class="btn btn-secondary">
+                                Добавить в корзину
+                            </button>
+
+                            <span class="p-2 text text-warning"
+                                  v-if="product.availableInventory - cartCount(product.id) < 1"
+                            >
+                                Товар закончился
+                            </span>
+                            <span class="p-2 text text-warning"
+                                  v-else-if="product.availableInventory - cartCount(product.id) < 5"
+                            >
+                                Осталось {{ product.availableInventory - cartCount(product.id) }} ед. товара
+                            </span>
+                            <span class="p-2 text text-warning"
+                                  v-else-if="cartCount(product.id) < 1"
+                            > Купить сейчас
+                        </span>
+
+                        </div>
+                    </div>
                 </div>
             </div>
             <div v-else class="cart">
@@ -158,14 +190,6 @@
 
             data: {
                 sitename: "My site",
-                product: {
-                    id: 1001,
-                    title: 'Товар',
-                    description: 'Описание <b>товара</b> с выделением текста',
-                    price: 2500,
-                    image: 'assets/images/product-1001.jpg',
-                    availableInventory: 3,
-                },
                 showProduct: true,
                 cart: [],
                 order: {
@@ -189,6 +213,7 @@
                     'Еще одна',
                     'Областная'
                 ],
+                products: [],
             },
 
             filters: {
@@ -211,24 +236,61 @@
                 },
             },
 
+            created: function () {
+                axios.get('./products.json')
+                    .then(function (response) {
+                        this.webstore.products = response.data.products;
+                    })
+                ;
+            },
+
             computed: {
                 cartItemCount: function() {
                     return this.cart.length || '';
                 },
-                canAddToCart: function() {
-                    return this.product.availableInventory > this.cartItemCount;
-                }
+                sortedProducts: function() {
+                    if (this.products.length > 0) {
+                        let productsArray = this.products.slice(0);
+
+                        function compare (a, b) {
+                            return a.title.toLowerCase() < b.toLowerCase()
+                                ? -1
+                                : a.title.toLowerCase() > b.toLowerCase()
+                                    ? 1
+                                    : 0;
+                        }
+
+                        return productsArray.sort(compare);
+                    }
+                },
             },
 
             methods: {
-                addToCart: function() {
-                    this.cart.push(this.product.id);
+                addToCart: function(product) {
+                    this.cart.push(product.id);
                 },
                 showCheckout() {
+                    console.log(this.products);
                     return this.showProduct = !this.showProduct;
                 },
                 submitForm() {
                     alert('Форма отправлена');
+                },
+                checkRating(n, product) {
+                    return product.rating >= n;
+                },
+                canAddToCart: function(product) {
+                    return product.availableInventory > this.cartCount(product.id);
+                },
+                cartCount: function (id) {
+                  let count = 0;
+                  for (let i = 0; i < this.cart.length; ++i) {
+                      if (this.cart[i] === id) {
+                          ++count;
+                      }
+                  }
+                  console.log(count);
+                  return count;
                 },
             },
         });
