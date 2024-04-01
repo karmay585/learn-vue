@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Learn vue</title>
+
+    <!--    <script src="assets/js/vue-3.4.21.js"></script>-->
+    <!--    <script src="https://unpkg.com/vue"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.16.2/axios.js"></script>
+    <link rel="stylesheet" href="../assets/css/bootstrap-5.0.2.css">
+    <link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body>
+<div id="app">
+    <form-component>
+        <h3 slot="header">{{ header }}</h3>
+        <label for="title" class="col-1" slot="titleSlot">{{ titleLabel }}</label>
+        <label for="author" class="col-1" slot="authorSlot">{{ authorLabel }}</label>
+    </form-component>
+
+    <hr>
+
+    <book-component
+            :books="books"
+    >
+        <h3 slot="header">{{ bookHeader }}</h3>
+        <template
+                slot="book"
+                slot-scope="props"
+        >
+            <h4><i>{{ props.text.title }}</i></h4>
+            <p><small> автор: {{ props.text.author }}</small></p>
+
+        </template>
+    </book-component>
+
+    <hr>
+
+    <div class="row">
+        <div class="offset-1">
+            <button
+                    @click="cycle"
+            >
+                Переключить
+            </button>
+        </div>
+    </div>
+
+    <component :is="currentView"></component>
+
+    <hr>
+
+    <product-component></product-component>
+</div>
+
+<script>
+
+    const FormComponent = {
+        template: `
+            <div class="row m-3">
+                <form>
+                    <slot name="header"></slot>
+                    <slot name="titleSlot"></slot>
+                    <input type="text" id="title" class="my-3"/> <br>
+                    <slot name="authorSlot"></slot>
+                    <input type="text" id="title" class="my-3"/><br>
+                    <button class="offset-1 btn btn-success">Отправить</button>
+                </form>
+            </div>
+        `,
+        props: [
+            'title',
+            'author',
+        ],
+    };
+
+    const BookComponent = {
+        template: `
+            <div>
+                <slot name="header"></slot>
+                <slot>текст по умолчанию</slot>
+                <slot name="book"
+                    v-for="book in books"
+                    :text="book"
+                ></slot>
+
+            </div>
+        `,
+        props: [
+            'books',
+        ]
+    };
+
+    const ProductComponent = function (resolve, reject) {
+        setTimeout(function () {
+                resolve({
+                    template: `<div>
+    <p>Асинхронный компонент</p>
+</div>`,
+                });
+            }, 1500);
+    };
+
+
+    new Vue({
+        el: '#app',
+        components: {
+            'form-component': FormComponent,
+            'book-component': BookComponent,
+            'product-component': ProductComponent,
+        },
+        data() {
+            return {
+                titleLabel: 'Заголовок',
+                authorLabel: 'Автор',
+                header: 'Заголовок формы',
+                books: [
+                    {author: 'John Smith', title: 'Best Of Times'},
+                    {author: 'Jane Doe', title: 'Go West Young Man'},
+                    {author: 'Avery Katz', title: 'The Life And Times Of Avery'},
+                ],
+                bookHeader: 'Заголовок для книг',
+                currentView: FormComponent,
+            };
+        },
+        methods: {
+            cycle() {
+                this.currentView = this.currentView === FormComponent ? BookComponent : FormComponent;
+                console.log(this.currentView);
+            },
+        },
+    });
+
+
+
+
+</script>
+
+</body>
+</html>
